@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockPredict — Linear Regression Engine</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- SIDEBAR -->
+      <aside id="sidebar">
+        <div class="sb-brand">
+          <div class="sb-brand-logo">
+            <div class="sb-logo-icon">📈</div>
+            <span class="sb-brand-name">StockPredict</span>
+          </div>
+          <div class="sb-brand-sub">Linear Regression Engine</div>
+        </div>
+        <div class="sb-section-label">Menu</div>
+        <nav class="sb-nav">
+          <div class="sb-item active" data-page="upload">
+            <span class="sb-icon">📤</span
+            ><span class="sb-label">Upload Data</span>
+          </div>
+          <div class="sb-item" data-page="dashboard">
+            <span class="sb-icon">📊</span
+            ><span class="sb-label">Dashboard</span>
+          </div>
+          <div class="sb-item" data-page="detail">
+            <span class="sb-icon">🔍</span
+            ><span class="sb-label">Detail Produk</span>
+          </div>
+          <div class="sb-item" data-page="prediksi">
+            <span class="sb-icon">📉</span
+            ><span class="sb-label">Tabel Prediksi</span
+            ><span class="sb-badge">Kurva</span>
+          </div>
+          <div class="sb-item" data-page="stok">
+            <span class="sb-icon">⚙️</span
+            ><span class="sb-label">Kelola Stok</span>
+          </div>
+        </nav>
+        <div class="sb-footer">
+          <span id="sb-footer-hist">Historis: —</span><br />
+          <span id="sb-footer-pred" style="color: #6b7280">Prediksi: —</span
+          ><br />
+          Model: Linear Regression
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div id="main">
+        <header id="topbar">
+          <button onclick="logout()" class="btn">
+
+Logout
+
+</button>
+          <div class="tb-left">
+            <span class="tb-title" id="tb-title">Upload Data Penjualan</span>
+          </div>
+          <div class="tb-right">
+            <span class="tb-chip model">Linear Regression</span>
+            <span class="tb-chip status" id="tb-badge">Belum ada data</span>
+          </div>
+        </header>
+
+        <main id="content">
+          <!-- ══════ PAGE: UPLOAD ══════ -->
+          <section class="page active" id="page-upload">
+            <!-- Step 1: Upload File -->
+            <div class="card">
+              <div class="card-title" style="margin-bottom: 10px">
+                <span class="icon">📁</span> Step 1 — Upload File Data Penjualan
+              </div>
+              <p
+                style="
+                  font-size: 12.5px;
+                  color: var(--text-secondary);
+                  margin-bottom: 14px;
+                "
+              >
+                Upload satu atau lebih file Excel. Setiap file = satu bulan
+                data. Nama file sebaiknya mengandung nama bulan, contoh:
+                <code
+                  style="
+                    background: var(--bg-tertiary);
+                    padding: 1px 6px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                  "
+                  >Penjualan_November_2025.xlsx</code
+                >
+              </p>
+              <div class="upload-zone" id="dropZone">
+                <span class="upload-zone-icon">📂</span>
+                <h3>Klik atau Drag &amp; Drop File XLS/XLSX</h3>
+                <p id="upload-sub-text">
+                  Upload bebas berapa pun file, setiap file = 1 bulan data
+                </p>
+              </div>
+              <input
+                type="file"
+                id="fileInput"
+                accept=".xlsx,.xls,.csv"
+                multiple
+                style="display: none"
+              />
+              <div class="file-list" id="file-list"></div>
+              <div class="demo-section" style="margin-top: 14px">
+                <h4><span class="demo-dot"></span> Atau Gunakan Data Demo</h4>
+                <p>
+                  Data otomatis: Agustus – Desember 2025, 10 produk, data
+                  realistis.
+                </p>
+                <button class="btn" onclick="loadDemo()">
+                  🔌 Muat Data Demo
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 2: Pilih Bulan Prediksi -->
+            <div class="card">
+              <div class="card-title" style="margin-bottom: 10px">
+                <span class="icon">📅</span> Step 2 — Pilih Jumlah Bulan
+                Prediksi
+              </div>
+              <p
+                style="
+                  font-size: 12.5px;
+                  color: var(--text-secondary);
+                  margin-bottom: 14px;
+                "
+              >
+                Sistem membaca bulan terakhir dari nama file, lalu otomatis
+                menentukan bulan yang diprediksi.
+              </p>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 14px;
+                  margin-bottom: 14px;
+                  flex-wrap: wrap;
+                "
+              >
+                <label
+                  style="
+                    font-size: 13px;
+                    color: var(--text-secondary);
+                    white-space: nowrap;
+                  "
+                  >Jumlah bulan prediksi:</label
+                >
+                <input
+                  type="number"
+                  id="pred-input"
+                  value="1"
+                  min="1"
+                  max="12"
+                  style="
+                    width: 80px;
+                    padding: 7px 12px;
+                    border: 1.5px solid var(--border-color);
+                    border-radius: 8px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: var(--accent);
+                    text-align: center;
+                    outline: none;
+                  "
+                />
+                <span style="font-size: 12px; color: var(--text-muted)"
+                  >Pilih 1 – 12 bulan ke depan</span
+                >
+              </div>
+              <div class="info-alert blue" id="prediksi-info">
+                Upload file terlebih dahulu. Sistem otomatis mendeteksi bulan
+                dari nama file.
+              </div>
+            </div>
+
+            <!-- Status & Run -->
+            <div class="card" id="upload-status-card" style="display: none">
+              <div class="card-title" style="margin-bottom: 12px">
+                <span class="icon">📋</span> Status
+              </div>
+              <p
+                id="status-text"
+                style="
+                  font-size: 13px;
+                  margin-bottom: 14px;
+                  color: var(--text-secondary);
+                "
+              >
+                —
+              </p>
+              <div style="display: flex; gap: 10px; justify-content: flex-end">
+                <button
+                  class="btn btn-primary"
+                  id="btn-run"
+                  onclick="runPrediction()"
+                  disabled
+                >
+                  🧠 Jalankan Prediksi
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ══════ PAGE: DASHBOARD ══════ -->
+          <section class="page" id="page-dashboard">
+            <div class="empty-state" id="dash-empty" style="display: flex">
+              <div class="es-icon">📊</div>
+              <h3>Belum Ada Data</h3>
+              <p>Upload file dan jalankan prediksi terlebih dahulu.</p>
+            </div>
+            <div id="dash-content" style="display: none">
+              <div class="metrics-grid" id="dash-metrics"></div>
+              <div class="card">
+                <div class="card-title">
+                  <span class="icon">📊</span> Total Prediksi per Bulan
+                </div>
+                <div class="chart-wrap" style="height: 260px">
+                  <canvas id="chartBulanan"></canvas>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">
+                  <span class="icon">📈</span> Prediksi per Produk
+                </div>
+                <div class="chart-wrap" style="height: 280px">
+                  <canvas id="chartProduk"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ══════ PAGE: DETAIL PRODUK ══════ -->
+          <section class="page" id="page-detail">
+            <div class="empty-state" id="detail-empty" style="display: flex">
+              <div class="es-icon">🔍</div>
+              <h3>Belum Ada Data</h3>
+              <p>Jalankan prediksi untuk melihat detail per produk.</p>
+            </div>
+            <div id="detail-content" style="display: none">
+              <div class="product-tabs" id="prod-tabs"></div>
+              <div class="card">
+                <div
+                  class="card-title"
+                  id="detail-prod-name"
+                  style="font-size: 16px; margin-bottom: 16px"
+                >
+                  —
+                </div>
+                <div class="metrics-grid" id="detail-metrics"></div>
+                <div class="card-title" style="margin: 16px 0 12px">
+                  <span class="icon">📉</span> Riwayat &amp; Kurva Regresi
+                </div>
+                <div class="chart-wrap" style="height: 250px">
+                  <canvas id="chartDetail"></canvas>
+                </div>
+                <div class="card-title" style="margin: 20px 0 10px">
+                  <span class="icon">🔢</span> Info Model
+                </div>
+                <div class="info-list" id="detail-info"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ══════ PAGE: TABEL PREDIKSI ══════ -->
+          <section class="page" id="page-prediksi">
+            <div class="empty-state" id="prediksi-empty" style="display: flex">
+              <div class="es-icon">📉</div>
+              <h3>Belum Ada Prediksi</h3>
+              <p>Upload data dan jalankan prediksi terlebih dahulu.</p>
+            </div>
+            <div id="prediksi-content" style="display: none">
+              <div class="card">
+                <div class="card-title">
+                  <span class="icon">📈</span> Kurva Regresi Linear — Semua
+                  Produk
+                </div>
+                <div class="chart-wrap" style="height: 320px">
+                  <canvas id="chartRegresi"></canvas>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">
+                  <span class="icon">📋</span> Tabel Prediksi Lengkap
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead id="thead-prediksi"></thead>
+                    <tbody id="tbody-prediksi"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ══════ PAGE: KELOLA STOK ══════ -->
+          <section class="page" id="page-stok">
+            <div class="empty-state" id="stok-empty" style="display: flex">
+              <div class="es-icon">⚙️</div>
+              <h3>Belum Ada Prediksi</h3>
+              <p>Jalankan prediksi terlebih dahulu.</p>
+            </div>
+            <div id="stok-content" style="display: none">
+              <div class="card">
+                <div class="card-title" style="margin-bottom: 8px">
+                  <span class="icon">📦</span> Stok Saat Ini per Produk
+                </div>
+                <p
+                  style="
+                    font-size: 12.5px;
+                    color: var(--text-secondary);
+                    margin-bottom: 14px;
+                  "
+                >
+                  Masukkan stok yang tersedia. Sistem menghitung rekomendasi
+                  berdasarkan prediksi + safety stock.
+                </p>
+                <div class="stok-inputs-grid" id="stok-inputs-grid"></div>
+                <div class="settings-row">
+                  <label>Safety Stock (%):</label>
+                  <input
+                    type="number"
+                    id="safety-pct-input"
+                    value="10"
+                    min="0"
+                    max="100"
+                    style="width: 80px"
+                  />
+                  <span style="font-size: 12px; color: var(--text-muted)"
+                    >Rekomendasi: 10–15% untuk barang fast-moving</span
+                  >
+                  <div style="flex: 1"></div>
+                  <button class="btn btn-primary" onclick="hitungStok()">
+                    🧮 Hitung Rekomendasi
+                  </button>
+                </div>
+              </div>
+              <div class="card" id="stok-result-card" style="display: none">
+                <div class="card-title" style="margin-bottom: 16px">
+                  <span class="icon">📊</span> Rincian Stok &amp; Rekomendasi
+                  per Bulan
+                </div>
+                <div id="stok-summary"></div>
+                <tbody id="tbody-stok" style="display: none"></tbody>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+<!-- ========================================= -->
+<!-- AI Recommendation Popup -->
+<!-- ========================================= -->
+
+<div id="aiModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Recommendation</h2>
+
+            <span class="close" onclick="closeAI()">&times;</span>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div id="aiResult">
+
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button class="btn btn-primary" onclick="closeAI()">
+
+                Tutup
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+
+if(sessionStorage.getItem("login")!="true"){
+
+window.location.href="login.html";
+
+}
+
+</script>
+
+<script src="js/app.js"></script>
+
+</body>
+
+</html>
+  </body>
+</html>

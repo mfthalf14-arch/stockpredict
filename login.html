@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - StockPredict</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:#f4f6fb;
+
+        }
+
+        .login-box{
+
+            width:380px;
+            background:white;
+            border-radius:12px;
+            padding:35px;
+            box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+        }
+
+        h2{
+
+            text-align:center;
+            margin-bottom:25px;
+            color:#2c3e50;
+
+        }
+
+        input{
+
+            width:100%;
+            padding:12px;
+            margin-top:12px;
+            border:1px solid #ddd;
+            border-radius:8px;
+
+        }
+
+        button{
+
+            width:100%;
+            margin-top:20px;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            background:#2563eb;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+
+        }
+
+        button:hover{
+
+            background:#1d4ed8;
+
+        }
+
+        p{
+
+            text-align:center;
+            margin-top:20px;
+            color:#666;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+<h2>StockPredict</h2>
+
+<input
+type="text"
+id="username"
+placeholder="Username">
+
+<input
+type="password"
+id="password"
+placeholder="Password">
+
+<button onclick="login()">
+
+LOGIN
+
+</button>
+
+<p id="error" style="color:red;"></p>
+
+</div>
+
+<script>
+
+const USERNAME="admin";
+const PASSWORD="PancaPrima2026!";
+
+function login(){
+
+let user=document.getElementById("username").value;
+let pass=document.getElementById("password").value;
+
+if(user==USERNAME && pass==PASSWORD){
+
+sessionStorage.setItem("login","true");
+
+window.location.href="index.html";
+
+}else{
+
+document.getElementById("error").innerHTML="Username atau Password Salah";
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
